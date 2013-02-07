@@ -1,0 +1,69 @@
+\documentclass{tufte-book}
+\usepackage[listings]{tcolorbox}
+\lstloadlanguages{[LaTeX]TeX, [primitive]TeX}
+\usepackage{luacode} % loads luatexbase as well
+% Emphasis
+%\renewcommand{\ttdefault}{cmtt}			% prefer old tt font
+\newcommand\emphasis[2][blue]{\lstset{emph={exec,if,then,else,do,end,while,for,print,sprint,directlua,#2},
+   emphstyle={\ttfamily\textcolor{#1}}}}%
+
+\lstset{language={[LaTeX]TeX},
+      escapeinside={{(*@}{@*)}}, 
+      numbers=left, 
+      gobble=0,
+      stepnumber=1,numbersep=5pt, 
+       numberstyle={\footnotesize\color{gray}},%firstnumber=last,
+      breaklines=true,
+      framesep=5pt,
+      basicstyle=\small\ttfamily,
+      showstringspaces=false,
+      keywordstyle=\ttfamily\textcolor{blue},
+      stringstyle=\color{orange},
+      commentstyle=\color{black},
+      rulecolor=\color{gray!10},
+      breakatwhitespace=true,
+     showspaces=false,  % shows spacing symbol
+	 xleftmargin=0pt,
+	 xrightmargin=5pt,
+	 aboveskip=3pt, % compact the code looks ugly in type
+	 belowskip=7pt,  % user responsible to insert any skips
+      backgroundcolor=\color{gray!15}}
+\begin{document}
+
+%\begin{tcblisting}{} uncomment if you have the latest version of tcolorbox
+\begin{luacode}
+  require "lfs"
+  local temp=lfs.currentdir()
+  tex.sprint(-2, temp)
+  tex.sprint("\\par")
+  function attrdir (path)
+    for file in lfs.dir(path) do
+        if file ~= "." and file ~= ".." then
+            local f = path..'/'..file
+            tex.sprint (-1, f.."\\par     ")
+            local attr = lfs.attributes (f)
+            assert (type(attr) == "table")
+            if attr.mode == "directory" then
+                attrdir (f)
+            else
+               -- for name, value in pairs(attr) do
+                    --tex.sprint (-2,name, value)
+                -- end
+            end
+        end
+    end
+  end
+  local z="C:/test"
+  attrdir (z)
+\end{luacode}
+%\end{tcblisting}
+\end{document}
+
+
+
+
+
+
+
+
+
